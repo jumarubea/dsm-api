@@ -1,0 +1,19 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+    env: {
+      NODE_ENV: 'test',
+      DATABASE_URL: process.env.DATABASE_URL || 'postgres://localhost:5432/dsm_test',
+      JWT_SECRET: 'test_jwt_secret_at_least_16_chars',
+      JWT_REFRESH_SECRET: 'test_jwt_refresh_secret_min_16_chars',
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.js'],
+    },
+  },
+});
