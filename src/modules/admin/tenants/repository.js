@@ -46,6 +46,19 @@ export const listBillingEvents = async (tenantId, limit = 50) => {
   return rows;
 };
 
+export const insertBillingEvent = async (
+  tenantId,
+  { type, amount_tzs, method, reference, note }
+) => {
+  const { rows } = await query(
+    `INSERT INTO billing_events (tenant_id, type, amount_tzs, method, reference, note)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING id, type, amount_tzs, method, reference, note, created_at`,
+    [tenantId, type, amount_tzs ?? null, method ?? null, reference ?? null, note ?? null]
+  );
+  return rows[0];
+};
+
 /** Atomically create the tenant, its trial subscription, and the owner shop_admin user. */
 export const createTenantWithOwner = ({ name, slug, ownerEmail, plan, trialDays, passwordHash }) =>
   withTransaction(async (client) => {

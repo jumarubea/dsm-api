@@ -9,6 +9,7 @@ import paymentsRouter from './payments/router.js';
 import customersRouter from './customers/router.js';
 import dashboardRouter from './dashboard/router.js';
 import reportsRouter from './reports/router.js';
+import subscriptionRouter from './subscription/router.js';
 
 /**
  * Tenant-scoped shop router, mounted at /api/v1 behind the authenticated chain.
@@ -26,5 +27,6 @@ router.use('/payments', paymentsRouter);
 router.use('/customers', customersRouter);
 router.use('/dashboard', dashboardRouter);
 router.use('/reports', reportsRouter);
+router.use('/subscription', subscriptionRouter);
 
 export default router;

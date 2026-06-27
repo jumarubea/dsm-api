@@ -53,3 +53,13 @@ export const impersonate = async (req, res) => {
   requireUuid(req.params.id);
   res.json({ data: await service.impersonate(req.params.id, req.user) });
 };
+
+export const listBilling = async (req, res) => {
+  requireUuid(req.params.id);
+  res.json({ data: await service.listBilling(req.params.id) });
+};
+
+export const recordBilling = async (req, res) => {
+  requireUuid(req.params.id);
+  res.status(201).json({ data: await service.recordBilling(req.params.id, req.body, req.user) });
+};

@@ -27,3 +27,18 @@ export const updateTenantSchema = z
     plan_id: z.uuid().optional(),
   })
   .refine((d) => Object.keys(d).length > 0, 'Hakuna taarifa za kubadilisha.');
+
+export const billingEventSchema = z.object({
+  type: z.enum([
+    'payment_received',
+    'payment_failed',
+    'plan_changed',
+    'trial_started',
+    'trial_expired',
+    'subscription_cancelled',
+  ]),
+  amount_tzs: z.coerce.number().nonnegative().optional(),
+  method: z.string().trim().max(50).optional(),
+  reference: z.string().trim().max(100).optional(),
+  note: z.string().trim().max(1000).optional(),
+});
