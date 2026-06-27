@@ -69,3 +69,9 @@ export const removePricingRule = async (id, ruleId, tenantId) => {
   const removed = await repo.removePricingRule(ruleId, id, tenantId);
   if (!removed) throw new AppError('Kanuni ya bei haipatikani.', 404, 'NOT_FOUND');
 };
+
+export const movements = async (id, tenantId) => {
+  const product = await repo.findProductById(id, tenantId);
+  if (!product) throw notFound();
+  return repo.listMovements(id, tenantId);
+};

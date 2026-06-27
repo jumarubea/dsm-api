@@ -15,6 +15,7 @@ const router = Router();
 router.get('/', ctrl.list);
 router.post('/', roleGuard(['shop_admin']), validate(createProductSchema), ctrl.create);
 router.get('/:id', ctrl.detail);
+router.get('/:id/movements', ctrl.movements);
 router.patch(
   '/:id',
   roleGuard(['shop_admin', 'manager']),
