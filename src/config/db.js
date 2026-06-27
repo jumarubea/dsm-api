@@ -29,4 +29,20 @@ export const verifyConnection = async () => {
   }
 };
 
+/** Run `fn(client)` inside a transaction, committing on success and rolling back on error. */
+export const withTransaction = async (fn) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
 export const closePool = () => pool.end();
