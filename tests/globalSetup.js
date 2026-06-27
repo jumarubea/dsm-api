@@ -24,7 +24,12 @@ export default async function setup() {
 
   try {
     await pool.query(
-      'TRUNCATE TABLE billing_events, subscriptions, users, tenants RESTART IDENTITY CASCADE'
+      'TRUNCATE TABLE audit_log, billing_events, subscriptions, users, tenants, subscription_plans RESTART IDENTITY CASCADE'
+    );
+
+    await pool.query(
+      `INSERT INTO subscription_plans (name, price_tzs, billing_cycle, trial_days, max_users, max_products)
+       VALUES ('Basic', 30000, 'monthly', 14, 3, 100), ('Pro', 75000, 'monthly', 14, -1, -1)`
     );
 
     const tenants = [
