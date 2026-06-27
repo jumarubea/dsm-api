@@ -23,3 +23,7 @@ export const movements = async (req, res) => {
 export const lowStock = async (req, res) => {
   res.json({ data: await service.lowStock(req.tenant.id, req.user.role) });
 };
+
+export const deadStock = async (req, res) => {
+  res.json({ data: await service.deadStock(req.tenant.id) });
+};

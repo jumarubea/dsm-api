@@ -49,6 +49,8 @@ export const adjustment = async (tenantId, input, idempotencyKey, userId) => {
 
 export const movements = (tenantId, filters) => repo.listMovements(tenantId, filters);
 
+export const deadStock = (tenantId) => repo.listDeadStock(tenantId);
+
 export const lowStock = async (tenantId, role) => {
   const products = await repo.listLowStock(tenantId);
   return products.map((p) => serializeProduct(p, role));
