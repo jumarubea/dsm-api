@@ -43,3 +43,8 @@ export const removePricingRule = async (req, res) => {
   await service.removePricingRule(req.params.id, req.params.rid, req.tenant.id);
   res.status(204).send();
 };
+
+export const movements = async (req, res) => {
+  requireUuid(req.params.id);
+  res.json({ data: await service.movements(req.params.id, req.tenant.id) });
+};

@@ -118,3 +118,13 @@ export const removePricingRule = async (ruleId, productId, tenantId) => {
   );
   return rows[0] || null;
 };
+
+export const listMovements = async (productId, tenantId) => {
+  const { rows } = await query(
+    `SELECT id, product_id, type, quantity, reason, unit_cost, created_by, created_at
+     FROM stock_movements WHERE product_id = $1 AND tenant_id = $2
+     ORDER BY created_at DESC LIMIT 200`,
+    [productId, tenantId]
+  );
+  return rows;
+};
