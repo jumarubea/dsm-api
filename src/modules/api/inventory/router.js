@@ -17,5 +17,6 @@ router.post('/stock-in', roleGuard(STORE_WRITE), validate(stockInSchema), ctrl.s
 router.post('/adjustment', roleGuard(STORE_WRITE), validate(adjustmentSchema), ctrl.adjustment);
 router.get('/movements', ctrl.movements);
 router.get('/low-stock', roleGuard(['manager', 'store_keeper', 'shop_admin']), ctrl.lowStock);
+router.get('/dead-stock', ctrl.deadStock);
 
 export default router;

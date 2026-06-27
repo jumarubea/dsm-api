@@ -50,6 +50,22 @@ export const listMovements = async (tenantId, { productId, type, dateFrom, dateT
   return rows;
 };
 
+export const listDeadStock = async (tenantId) => {
+  const { rows } = await query(
+    `SELECT p.id, p.name, p.stock_qty, MAX(s.created_at) AS last_sold_at
+     FROM products p
+     LEFT JOIN sale_items si ON si.product_id = p.id AND si.tenant_id = p.tenant_id
+     LEFT JOIN sales s ON s.id = si.sale_id AND s.tenant_id = p.tenant_id AND s.status = 'COMPLETED'
+     WHERE p.tenant_id = $1 AND p.is_active = true
+     GROUP BY p.id
+     HAVING MAX(s.created_at) IS NULL
+        OR MAX(s.created_at) < NOW() - (COALESCE(p.dead_stock_days, 90) || ' days')::INTERVAL
+     ORDER BY last_sold_at ASC NULLS FIRST`,
+    [tenantId]
+  );
+  return rows;
+};
+
 export const listLowStock = async (tenantId) => {
   const { rows } = await query(
     `SELECT id, tenant_id, name, sku, category_id, unit_of_measure, retail_price, wholesale_price,
