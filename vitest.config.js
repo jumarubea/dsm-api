@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    globalSetup: './tests/globalSetup.js',
     env: {
       NODE_ENV: 'test',
       DATABASE_URL: process.env.DATABASE_URL || 'postgres://localhost:5432/dsm_test',

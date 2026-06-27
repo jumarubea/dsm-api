@@ -12,9 +12,7 @@ export const errorHandler = (err, req, res, next) => {
   const isOperational = err instanceof AppError;
   const statusCode = isOperational ? err.statusCode : 500;
   const code = isOperational ? err.code : 'INTERNAL_ERROR';
-  const message = isOperational
-    ? err.message
-    : 'Hitilafu ya seva. Tafadhali jaribu tena.';
+  const message = isOperational ? err.message : 'Hitilafu ya seva. Tafadhali jaribu tena.';
 
   if (!isOperational || statusCode >= 500) {
     logger.error({ err, path: req.path, method: req.method }, 'Request error');
