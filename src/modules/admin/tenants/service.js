@@ -145,3 +145,24 @@ export const impersonate = async (id, actor) => {
 
   return { token, expires_in: '2h', tenant: { id: tenant.id, slug: tenant.slug } };
 };
+
+export const listBilling = async (id) => {
+  const tenant = await repo.findTenantById(id);
+  if (!tenant) throw notFound();
+  return repo.listBillingEvents(id);
+};
+
+export const recordBilling = async (id, input, actor) => {
+  const tenant = await repo.findTenantById(id);
+  if (!tenant) throw notFound();
+  const event = await repo.insertBillingEvent(id, input);
+  await logAudit({
+    userId: actor.id,
+    tenantId: id,
+    action: 'BILLING_EVENT_RECORDED',
+    entityType: 'billing_event',
+    entityId: event.id,
+    newValue: { type: input.type, amount_tzs: input.amount_tzs ?? null },
+  });
+  return event;
+};

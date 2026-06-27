@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validate } from '../../../middleware/validate.js';
-import { createTenantSchema, updateTenantSchema } from './validation.js';
+import { createTenantSchema, updateTenantSchema, billingEventSchema } from './validation.js';
 import * as ctrl from './controller.js';
 
 /**
@@ -17,5 +17,7 @@ router.post('/:id/suspend', ctrl.suspend);
 router.post('/:id/activate', ctrl.activate);
 router.delete('/:id', ctrl.remove);
 router.post('/:id/impersonate', ctrl.impersonate);
+router.get('/:id/billing', ctrl.listBilling);
+router.post('/:id/billing', validate(billingEventSchema), ctrl.recordBilling);
 
 export default router;
