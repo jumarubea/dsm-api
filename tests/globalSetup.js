@@ -53,6 +53,20 @@ export default async function setup() {
           [tenantId, `${role} ${t.slug}`, `${role}.${t.slug}@dsm.test`, passwordHash, role]
         );
       }
+
+      // Active tenants get one category + product so product/isolation tests have data.
+      if (t.status === 'active') {
+        const cat = await pool.query(
+          `INSERT INTO categories (tenant_id, name) VALUES ($1, 'General') RETURNING id`,
+          [tenantId]
+        );
+        await pool.query(
+          `INSERT INTO products
+             (tenant_id, name, sku, category_id, unit_of_measure, retail_price, wholesale_price, cost_price)
+           VALUES ($1, 'Sukari', $2, $3, 'kg', 2500, 2300, 2000)`,
+          [tenantId, `SKU-${t.slug}`, cat.rows[0].id]
+        );
+      }
     }
 
     await pool.query(

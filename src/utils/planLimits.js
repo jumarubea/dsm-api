@@ -24,3 +24,27 @@ export const checkUserLimit = async (tenantId) => {
     );
   }
 };
+
+/**
+ * Enforce the plan's max_products limit for a tenant. -1 means unlimited.
+ * Throws 422 PLAN_LIMIT_REACHED when the active product count is at the cap.
+ */
+export const checkProductLimit = async (tenantId) => {
+  const { rows } = await query(
+    `SELECT sp.max_products,
+            (SELECT COUNT(*) FROM products WHERE tenant_id = $1 AND is_active = true) AS product_count
+     FROM subscriptions s
+     JOIN subscription_plans sp ON sp.id = s.plan_id
+     WHERE s.tenant_id = $1`,
+    [tenantId]
+  );
+  const row = rows[0];
+  if (!row) return;
+  if (row.max_products !== -1 && parseInt(row.product_count, 10) >= row.max_products) {
+    throw new AppError(
+      'Umefika kiwango cha juu cha bidhaa kwa mpango wako. Panda mpango ili kuongeza zaidi.',
+      422,
+      'PLAN_LIMIT_REACHED'
+    );
+  }
+};
