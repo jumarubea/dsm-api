@@ -5,6 +5,9 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     globalSetup: './tests/globalSetup.js',
+    // Generous timeout: many tests do bcrypt-heavy tenant/user creation in parallel.
+    testTimeout: 20000,
+    hookTimeout: 20000,
     env: {
       NODE_ENV: 'test',
       DATABASE_URL: process.env.TEST_DATABASE_URL || 'postgres://localhost:5432/dsm_test',

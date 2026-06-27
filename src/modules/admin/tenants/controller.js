@@ -18,14 +18,15 @@ export const detail = async (req, res) => {
 
 export const create = async (req, res) => {
   const result = await service.create(req.body, req.user);
-  res.status(201).json({
-    data: {
-      tenant: result.tenant,
-      owner: result.owner,
-      subscription: result.subscription,
-      onboarding_email: result.email,
-    },
-  });
+  const data = {
+    tenant: result.tenant,
+    owner: result.owner,
+    subscription: result.subscription,
+    onboarding_email: result.email,
+  };
+  // Present only outside production (service returns undefined in prod).
+  if (result.tempPassword) data.temp_password = result.tempPassword;
+  res.status(201).json({ data });
 };
 
 export const update = async (req, res) => {
