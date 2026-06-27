@@ -6,6 +6,7 @@ import inventoryRouter from './inventory/router.js';
 import notificationsRouter from './notifications/router.js';
 import salesRouter from './sales/router.js';
 import paymentsRouter from './payments/router.js';
+import customersRouter from './customers/router.js';
 
 /**
  * Tenant-scoped shop router, mounted at /api/v1 behind the authenticated chain.
@@ -20,5 +21,6 @@ router.use('/inventory', inventoryRouter);
 router.use('/notifications', notificationsRouter);
 router.use('/sales', salesRouter);
 router.use('/payments', paymentsRouter);
+router.use('/customers', customersRouter);
 
 export default router;
