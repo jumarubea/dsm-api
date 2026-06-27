@@ -14,6 +14,7 @@ import { roleGuard } from './middleware/roleGuard.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
 import adminRouter from './modules/admin/router.js';
+import authRouter from './modules/api/auth/router.js';
 import apiRouter from './modules/api/router.js';
 
 /**
@@ -50,6 +51,10 @@ export const createApp = () => {
 
   // Super Admin platform routes — no tenant context.
   app.use('/admin/v1', authenticate, roleGuard(['super_admin']), adminRouter);
+
+  // Public shop auth routes — must precede the authenticated chain (login issues
+  // the first token, so it cannot sit behind authenticate).
+  app.use('/api/v1/auth', authRouter);
 
   // Shop routes — tenant-scoped, subscription-gated, idempotent writes.
   app.use('/api/v1', authenticate, resolveTenant, subscriptionGuard, checkIdempotency, apiRouter);
