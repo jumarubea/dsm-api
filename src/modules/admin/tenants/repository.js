@@ -112,7 +112,10 @@ export const updateTenant = (id, { name, status, plan_id }) =>
       await client.query('UPDATE subscriptions SET status = $2 WHERE tenant_id = $1', [id, status]);
     }
     if (plan_id !== undefined) {
-      await client.query('UPDATE subscriptions SET plan_id = $2 WHERE tenant_id = $1', [id, plan_id]);
+      await client.query('UPDATE subscriptions SET plan_id = $2 WHERE tenant_id = $1', [
+        id,
+        plan_id,
+      ]);
     }
     return tenant;
   });

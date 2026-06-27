@@ -11,10 +11,10 @@ export const listUsers = async (tenantId) => {
 };
 
 export const findUserById = async (id, tenantId) => {
-  const { rows } = await query(
-    `SELECT ${RETURNING} FROM users WHERE id = $1 AND tenant_id = $2`,
-    [id, tenantId]
-  );
+  const { rows } = await query(`SELECT ${RETURNING} FROM users WHERE id = $1 AND tenant_id = $2`, [
+    id,
+    tenantId,
+  ]);
   return rows[0] || null;
 };
 

@@ -7,7 +7,8 @@ import * as repo from './repository.js';
 const invalidCredentials = () =>
   new AppError('Barua pepe au nenosiri si sahihi.', 401, 'INVALID_CREDENTIALS');
 
-const sessionExpired = () => new AppError('Kipindi kimeisha. Tafadhali ingia tena.', 401, 'AUTH_INVALID');
+const sessionExpired = () =>
+  new AppError('Kipindi kimeisha. Tafadhali ingia tena.', 401, 'AUTH_INVALID');
 
 const issueTokens = (user) => ({
   accessToken: signAccessToken({

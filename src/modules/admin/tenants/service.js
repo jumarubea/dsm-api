@@ -41,8 +41,10 @@ export const create = async (input, actor) => {
   } catch (err) {
     if (err.code === '23505') {
       const constraint = String(err.constraint || '');
-      if (constraint.includes('slug')) throw new AppError('Slug hii tayari inatumika.', 409, 'SLUG_TAKEN');
-      if (constraint.includes('email')) throw new AppError('Barua pepe hii tayari inatumika.', 409, 'EMAIL_TAKEN');
+      if (constraint.includes('slug'))
+        throw new AppError('Slug hii tayari inatumika.', 409, 'SLUG_TAKEN');
+      if (constraint.includes('email'))
+        throw new AppError('Barua pepe hii tayari inatumika.', 409, 'EMAIL_TAKEN');
       throw new AppError('Taarifa tayari zipo.', 409, 'CONFLICT');
     }
     throw err;
