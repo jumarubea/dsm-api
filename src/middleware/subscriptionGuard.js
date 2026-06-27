@@ -6,7 +6,13 @@ export const subscriptionGuard = (req, res, next) => {
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
 
   if (['past_due', 'suspended', 'cancelled'].includes(req.tenant?.status)) {
-    return next(new AppError('Usajili wako umesimama. Wasiliana na msimamizi ili kuendelea.', 402, 'SUBSCRIPTION_INACTIVE'));
+    return next(
+      new AppError(
+        'Usajili wako umesimama. Wasiliana na msimamizi ili kuendelea.',
+        402,
+        'SUBSCRIPTION_INACTIVE'
+      )
+    );
   }
 
   next();

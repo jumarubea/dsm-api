@@ -4,13 +4,7 @@
  * read by subscriptionGuard.
  */
 export const up = (pgm) => {
-  pgm.createType('tenant_status', [
-    'active',
-    'trialing',
-    'past_due',
-    'suspended',
-    'cancelled',
-  ]);
+  pgm.createType('tenant_status', ['active', 'trialing', 'past_due', 'suspended', 'cancelled']);
 
   pgm.createTable('tenants', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },

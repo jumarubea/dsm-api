@@ -52,14 +52,7 @@ export const createApp = () => {
   app.use('/admin/v1', authenticate, roleGuard(['super_admin']), adminRouter);
 
   // Shop routes — tenant-scoped, subscription-gated, idempotent writes.
-  app.use(
-    '/api/v1',
-    authenticate,
-    resolveTenant,
-    subscriptionGuard,
-    checkIdempotency,
-    apiRouter
-  );
+  app.use('/api/v1', authenticate, resolveTenant, subscriptionGuard, checkIdempotency, apiRouter);
 
   app.use(notFound);
   app.use(errorHandler);
