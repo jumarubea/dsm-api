@@ -5,8 +5,11 @@ export const resolveTenant = async (req, res, next) => {
   // Super admin has no tenant scope.
   if (req.user.role === 'super_admin') return next();
 
-  const slug = req.hostname.split('.')[0] || req.user.tenant_slug;
-  if (!slug || slug === 'www' || slug === 'app') {
+  // Prefer the subdomain; on non-tenant hosts (localhost / www / app) fall back
+  // to the JWT's tenant_slug so the API is testable without a subdomain.
+  const sub = req.hostname.split('.')[0];
+  const slug = !sub || ['www', 'app', 'localhost'].includes(sub) ? req.user.tenant_slug : sub;
+  if (!slug) {
     return next(new AppError('Tenant haijulikani.', 400, 'TENANT_NOT_FOUND'));
   }
 

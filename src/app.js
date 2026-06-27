@@ -3,6 +3,8 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
+import { buildOpenApiSpec } from './docs/openapi.js';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
 import { resolveLanguage } from './middleware/resolveLanguage.js';
@@ -48,6 +50,11 @@ export const createApp = () => {
   app.get('/health', (req, res) => {
     res.json({ status: 'ok', service: 'dsm-api' });
   });
+
+  // API docs — OpenAPI spec + Swagger UI (import /openapi.json into Postman).
+  const openApiSpec = buildOpenApiSpec();
+  app.get('/openapi.json', (req, res) => res.json(openApiSpec));
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
   // Super Admin platform routes — no tenant context.
   app.use('/admin/v1', authenticate, roleGuard(['super_admin']), adminRouter);
