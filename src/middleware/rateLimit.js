@@ -1,14 +1,16 @@
 import rateLimit from 'express-rate-limit';
+import { env } from '../config/env.js';
 
 /**
  * Login throttle — 10 attempts per IP per 15 minutes. Applied to the auth login
- * routes (both /api/v1/auth/login and /admin/v1/auth/login) when they land.
+ * route(s). Skipped under NODE_ENV=test so the suite is not throttled.
  */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => env.NODE_ENV === 'test',
   message: {
     error: {
       code: 'TOO_MANY_REQUESTS',
