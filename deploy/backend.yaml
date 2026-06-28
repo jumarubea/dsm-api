@@ -12,8 +12,17 @@ spec:
       labels:
         app: dsm-api
     spec:
-      imagePullSecrets:
-        - name: ghcr
+      initContainers:
+        # Wait for Postgres, run migrations, then start the API. Idempotent.
+        - name: migrate
+          image: ghcr.io/jumarubea/dsm-api:latest
+          command:
+            - sh
+            - -c
+            - 'for i in $(seq 1 40); do npm run migrate:up && exit 0; echo "waiting for db..."; sleep 3; done; exit 1'
+          envFrom:
+            - secretRef:
+                name: dsm-secrets
       containers:
         - name: api
           image: ghcr.io/jumarubea/dsm-api:latest
