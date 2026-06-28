@@ -4,7 +4,6 @@ namespace: dsm
 resources:
   - namespace.yaml
   - postgres.yaml
-  - migrate-job.yaml
   - backend.yaml
   - ingress.yaml
 images:
