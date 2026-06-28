@@ -5,8 +5,9 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    # Wildcard nip.io host: every <tenant>.<ip>.nip.io reaches the cluster.
-    - host: '*.157.230.83.35.nip.io'
+    # Wildcard domain: app.my-net.tech (super admin) + every <tenant>.my-net.tech.
+    # TLS is issued on demand per host by Traefik's Let's Encrypt resolver.
+    - host: '*.my-net.tech'
       http:
         paths:
           - path: /api
