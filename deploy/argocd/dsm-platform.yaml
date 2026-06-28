@@ -1,0 +1,22 @@
+# Argo CD Application: backend platform (API, Postgres, ingress, migrations).
+# Apply once into the argocd namespace during bootstrap.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dsm-platform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jumarubea/dsm-api.git
+    targetRevision: main
+    path: deploy
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dsm
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

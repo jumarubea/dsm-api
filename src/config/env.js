@@ -21,6 +21,7 @@ const envSchema = z.object({
   MPESA_API_KEY: requiredInProd(z.string().min(1)),
   MPESA_SERVICE_PROVIDER_CODE: requiredInProd(z.string().min(1)),
   MPESA_LIVE: z.string().optional(),
+  COOKIE_SECURE: z.enum(['true', 'false']).optional(),
   EMAIL_SERVICE_API_KEY: requiredInProd(z.string().min(1)),
   EMAIL_FROM_ADDRESS: requiredInProd(z.email()),
 });
@@ -37,6 +38,11 @@ if (!parsed.success) {
 export const env = parsed.data;
 export const isProduction = env.NODE_ENV === 'production';
 export const isTest = env.NODE_ENV === 'test';
+
+// Refresh cookie Secure flag: defaults to production, but can be forced off for
+// an HTTP (no-TLS) deployment, or on when behind a TLS-terminating proxy.
+export const cookieSecure =
+  env.COOKIE_SECURE === 'true' ? true : env.COOKIE_SECURE === 'false' ? false : isProduction;
 
 // Live Vodacom M-Pesa integration is on only when an API key is present AND
 // explicitly enabled. Otherwise payments run in manual/external mode.
