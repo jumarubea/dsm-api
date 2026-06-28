@@ -2,6 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: dsm-ingress
+  annotations:
+    # Issue a Let's Encrypt cert per host on demand (HTTP-01).
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
 spec:
   ingressClassName: traefik
   rules:
