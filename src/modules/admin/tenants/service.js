@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { env, isProduction } from '../../../config/env.js';
+import { env, exposeTempPassword } from '../../../config/env.js';
 import { logger } from '../../../config/logger.js';
 import { AppError } from '../../../utils/AppError.js';
 import { generateTempPassword } from '../../../utils/password.js';
@@ -67,13 +67,12 @@ export const create = async (input, actor) => {
     newValue: { name: input.name, slug: input.slug, plan_id: plan.id },
   });
 
-  // Outside production (no email provider wired), surface the temp password so
-  // the broker can hand off credentials and developers can test the login flow.
-  // NEVER do this in production — there the onboarding email is the only channel.
-  if (!isProduction) {
+  // Surface the temp password (log + response) while there's no email provider.
+  // Gated by EXPOSE_TEMP_PASSWORD in production — disable once email is wired.
+  if (exposeTempPassword) {
     logger.warn(
       { owner_email: input.owner_email, temp_password: tempPassword },
-      'DEV ONLY: tenant onboarding temporary password (never logged in production)'
+      'Onboarding temporary password (EXPOSE_TEMP_PASSWORD on — turn off once email works)'
     );
   }
 
@@ -82,7 +81,7 @@ export const create = async (input, actor) => {
     owner: created.owner,
     subscription: created.subscription,
     email,
-    tempPassword: isProduction ? undefined : tempPassword,
+    tempPassword: exposeTempPassword ? tempPassword : undefined,
   };
 };
 
