@@ -1,4 +1,4 @@
-import { isProduction } from '../../../config/env.js';
+import { cookieSecure } from '../../../config/env.js';
 import { serializeUser } from '../../../serialisers/user.js';
 import * as service from './service.js';
 
@@ -6,7 +6,7 @@ const REFRESH_COOKIE = 'refresh_token';
 
 const cookieOptions = {
   httpOnly: true,
-  secure: isProduction,
+  secure: cookieSecure,
   sameSite: 'strict',
   path: '/api/v1/auth',
   maxAge: 7 * 24 * 60 * 60 * 1000,

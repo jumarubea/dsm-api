@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dsm-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+    # Wildcard nip.io host: every <tenant>.<ip>.nip.io reaches the cluster.
+    - host: '*.157.230.83.35.nip.io'
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: dsm-api
+                port:
+                  number: 3000
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: dsm-api
+                port:
+                  number: 3000
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: dsm-api
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dsm-web
+                port:
+                  number: 80
