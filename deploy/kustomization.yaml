@@ -8,4 +8,4 @@ resources:
   - ingress.yaml
 images:
   - name: ghcr.io/jumarubea/dsm-api
-    newTag: sha-9a5cefc1843e1c12b630a6e073c884500700e09a
+    newTag: sha-2300399fb975726d0e0dc98791934d3ece1c0092
