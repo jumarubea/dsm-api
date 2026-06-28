@@ -22,6 +22,7 @@ const envSchema = z.object({
   MPESA_SERVICE_PROVIDER_CODE: requiredInProd(z.string().min(1)),
   MPESA_LIVE: z.string().optional(),
   COOKIE_SECURE: z.enum(['true', 'false']).optional(),
+  EXPOSE_TEMP_PASSWORD: z.enum(['true', 'false']).optional(),
   EMAIL_SERVICE_API_KEY: requiredInProd(z.string().min(1)),
   EMAIL_FROM_ADDRESS: requiredInProd(z.email()),
 });
@@ -43,6 +44,11 @@ export const isTest = env.NODE_ENV === 'test';
 // an HTTP (no-TLS) deployment, or on when behind a TLS-terminating proxy.
 export const cookieSecure =
   env.COOKIE_SECURE === 'true' ? true : env.COOKIE_SECURE === 'false' ? false : isProduction;
+
+// Surface the onboarding temp password (in the create-tenant response + logs).
+// Always on outside production; in production only when explicitly enabled — use
+// this until the email provider is wired, then turn it off.
+export const exposeTempPassword = !isProduction || env.EXPOSE_TEMP_PASSWORD === 'true';
 
 // Live Vodacom M-Pesa integration is on only when an API key is present AND
 // explicitly enabled. Otherwise payments run in manual/external mode.
