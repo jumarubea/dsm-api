@@ -8,9 +8,10 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    # Wildcard domain: app.my-net.tech (super admin) + every <tenant>.my-net.tech.
-    # TLS is issued on demand per host by Traefik's Let's Encrypt resolver.
-    - host: '*.my-net.tech'
+    # Single host for all roles; tenant is resolved from the JWT (subdomain 'app'
+    # falls back to the token's tenant). HTTP-01 issues a normal cert for this host.
+    # Per-tenant vanity subdomains would need a wildcard cert via DNS-01.
+    - host: app.my-net.tech
       http:
         paths:
           - path: /api
