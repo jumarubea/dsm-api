@@ -18,6 +18,16 @@ export const login = async (req, res) => {
   res.json({ data: { accessToken, user: serializeUser(user) } });
 };
 
+export const plans = async (req, res) => {
+  res.json({ data: await service.listPlans() });
+};
+
+export const register = async (req, res) => {
+  const { accessToken, refreshToken, user } = await service.register(req.body);
+  res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
+  res.status(201).json({ data: { accessToken, user: serializeUser(user) } });
+};
+
 export const refresh = async (req, res) => {
   const { accessToken, refreshToken, user } = await service.refresh(req.cookies?.[REFRESH_COOKIE]);
   res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);

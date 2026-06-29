@@ -60,7 +60,15 @@ export const insertBillingEvent = async (
 };
 
 /** Atomically create the tenant, its trial subscription, and the owner shop_admin user. */
-export const createTenantWithOwner = ({ name, slug, ownerEmail, plan, trialDays, passwordHash }) =>
+export const createTenantWithOwner = ({
+  name,
+  slug,
+  ownerEmail,
+  ownerName,
+  plan,
+  trialDays,
+  passwordHash,
+}) =>
   withTransaction(async (client) => {
     const t = await client.query(
       `INSERT INTO tenants (name, slug, status, owner_email)
@@ -80,13 +88,22 @@ export const createTenantWithOwner = ({ name, slug, ownerEmail, plan, trialDays,
 
     const owner = await client.query(
       `INSERT INTO users (tenant_id, name, email, password_hash, role)
-       VALUES ($1, 'Shop Owner', $2, $3, 'shop_admin')
-       RETURNING id, email, role`,
-      [tenant.id, ownerEmail, passwordHash]
+       VALUES ($1, $2, $3, $4, 'shop_admin')
+       RETURNING id, name, email, role, tenant_id, is_active, language_preference`,
+      [tenant.id, ownerName || 'Shop Owner', ownerEmail, passwordHash]
     );
 
     return { tenant, subscription: sub.rows[0], owner: owner.rows[0] };
   });
+
+/** Public list of active plans for the self-registration form. */
+export const listActivePlans = async () => {
+  const { rows } = await query(
+    `SELECT id, name, price_tzs, billing_cycle, trial_days, max_users, max_products, features
+     FROM subscription_plans WHERE is_active = true ORDER BY price_tzs`
+  );
+  return rows;
+};
 
 export const updateTenant = (id, { name, status, plan_id }) =>
   withTransaction(async (client) => {

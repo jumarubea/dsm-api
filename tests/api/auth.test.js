@@ -76,4 +76,75 @@ describe('Auth — /api/v1/auth', () => {
       expect(res.body).toEqual({});
     });
   });
+
+  describe('Self-registration — GET /plans + POST /register', () => {
+    const planId = async () => {
+      const res = await request(app).get('/api/v1/auth/plans');
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBeGreaterThan(0);
+      return res.body.data[0].id;
+    };
+
+    it('GET /plans returns active plans publicly (no auth)', async () => {
+      const res = await request(app).get('/api/v1/auth/plans');
+      expect(res.status).toBe(200);
+      res.body.data.forEach((p) => expect(p.id).toBeTruthy());
+    });
+
+    it('registers a new shop, signs the owner in, sets a refresh cookie', async () => {
+      const email = `owner.${Date.now()}@selfreg.test`;
+      const res = await request(app)
+        .post('/api/v1/auth/register')
+        .send({
+          shop_name: 'Duka la Mtaani',
+          owner_name: 'Asha Owner',
+          email,
+          password: 'StrongPass123',
+          plan_id: await planId(),
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data.accessToken).toBeTruthy();
+      expect(res.body.data.user.role).toBe('shop_admin');
+      expect(res.body.data.user.tenant_id).toBeTruthy();
+      expect(res.body.data.user.password_hash).toBeUndefined();
+      const refresh = res.headers['set-cookie']?.find((c) => c.startsWith('refresh_token='));
+      expect(refresh).toMatch(/HttpOnly/i);
+
+      // The new owner can immediately log in with the password they chose.
+      const login = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email, password: 'StrongPass123' });
+      expect(login.status).toBe(200);
+      expect(login.body.data.user.role).toBe('shop_admin');
+    });
+
+    it('rejects a duplicate owner email with 409 EMAIL_TAKEN', async () => {
+      const res = await request(app)
+        .post('/api/v1/auth/register')
+        .send({
+          shop_name: 'Another Shop',
+          owner_name: 'Existing User',
+          email: 'shop_admin.shop-a@dsm.test', // already seeded
+          password: 'StrongPass123',
+          plan_id: await planId(),
+        });
+      expect(res.status).toBe(409);
+      expect(res.body.error.code).toBe('EMAIL_TAKEN');
+    });
+
+    it('rejects a weak password with a validation error', async () => {
+      const res = await request(app)
+        .post('/api/v1/auth/register')
+        .send({
+          shop_name: 'Weak Pass Shop',
+          owner_name: 'Test User',
+          email: `weak.${Date.now()}@selfreg.test`,
+          password: 'short',
+          plan_id: await planId(),
+        });
+      expect(res.status).toBe(422);
+    });
+  });
 });

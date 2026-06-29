@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { loginSchema } from '../modules/api/auth/validation.js';
+import { loginSchema, registerSchema } from '../modules/api/auth/validation.js';
 import {
   createTenantSchema,
   updateTenantSchema,
@@ -46,6 +46,17 @@ const MANIFEST = [
   ep('get', '/health', { tag: 'Health', summary: 'Service health', security: false }),
 
   // Shop auth (public)
+  ep('get', '/api/v1/auth/plans', {
+    tag: 'Auth',
+    summary: 'List active plans (for the registration form)',
+    security: false,
+  }),
+  ep('post', '/api/v1/auth/register', {
+    tag: 'Auth',
+    summary: 'Self-register a shop and sign the owner in',
+    body: registerSchema,
+    security: false,
+  }),
   ep('post', '/api/v1/auth/login', {
     tag: 'Auth',
     summary: 'Login',
