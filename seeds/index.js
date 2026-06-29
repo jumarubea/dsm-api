@@ -19,7 +19,9 @@ const PLANS = [
     price_tzs: 30000,
     billing_cycle: 'monthly',
     trial_days: 14,
-    max_users: 3,
+    // Floor must fit one of every role (owner + manager + attendant + keeper),
+    // plus room for a second attendant. See migration 017.
+    max_users: 5,
     max_products: 100,
     features: {},
   },
